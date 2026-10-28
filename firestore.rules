@@ -1,0 +1,243 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isServerServiceAccount() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'ais-sandbox@ais-asia-southeast1-8a6afa27c7.iam.gserviceaccount.com' ||
+        request.auth.token.email == 'ais-sandbox@ais-asia-southeast1-e8e759c8c3.iam.gserviceaccount.com' ||
+        request.auth.token.email == 'ais-sandbox@ais-asia-southeast1-4497a4ef53.iam.gserviceaccount.com' ||
+        request.auth.token.email == 'ais-sandbox@ais-asia-southeast1-3097dd73e9.iam.gserviceaccount.com' ||
+        request.auth.token.email == 'ais-sandbox@ais-asia-southeast1-d56c1cda39.iam.gserviceaccount.com' ||
+        request.auth.token.email.matches('^ais-sandbox@.*\\.iam\\.gserviceaccount\\.com$') ||
+        request.auth.uid == 'Y8EkytnceJb8ApPfXeycGPex6eB2' ||
+        request.auth.uid == 'b2CGdzUVgDMJ2aE0VmeZUaE9JQE2' ||
+        request.auth.uid == 'I0Pvtgs2iigapt3C1G4zvuqFY5O2' ||
+        request.auth.uid == 'noYoQevmaJYfb9HymWX5DU03BR83'
+      );
+    }
+
+    function isAdmin() {
+      return isServerServiceAccount() || (
+        isAuthenticated() && (
+          request.auth.token.email == 'ngbinh188@gmail.com' ||
+          request.auth.token.email == 'doanthibinhtdn@gmail.com' ||
+          request.auth.token.email == 'binhdtsply@gmail.com' ||
+          request.auth.token.email == 'sunnitran.2017@gmail.com' ||
+          request.auth.token.admin == true
+        )
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 256;
+    }
+
+    // Default deny all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /tenants/{tenantId} {
+      allow get: if isAuthenticated() && isValidId(tenantId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if isAdmin() && isValidId(tenantId);
+    }
+
+    match /teacher_accounts/{teacherId} {
+      allow get: if isAuthenticated() && isValidId(teacherId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if isAdmin() && isValidId(teacherId);
+    }
+
+    match /class_settings/{tenantId} {
+      allow get: if isAuthenticated() && isValidId(tenantId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(tenantId);
+    }
+
+    match /students/{studentDocId} {
+      allow get: if isAuthenticated() && isValidId(studentDocId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(studentDocId);
+    }
+
+    match /timetables/{timetableId} {
+      allow get: if isAuthenticated() && isValidId(timetableId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(timetableId);
+    }
+
+    match /assignments/{assignmentId} {
+      allow get: if isAuthenticated() && isValidId(assignmentId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(assignmentId);
+    }
+
+    match /posts/{postId} {
+      allow get: if isAuthenticated() && isValidId(postId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(postId);
+    }
+
+    match /admin_accounts/{adminId} {
+      allow get: if isAdmin() && isValidId(adminId);
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin() && isValidId(adminId);
+    }
+
+    match /auth_sessions/{sessionId} {
+      allow get: if isAdmin() && isValidId(sessionId);
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin() && isValidId(sessionId);
+    }
+
+    match /career_profiles/{profileId} {
+      allow get: if isAuthenticated() && isValidId(profileId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(profileId);
+    }
+
+    match /laurel_trees/{treeId} {
+      allow get: if isAuthenticated() && isValidId(treeId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(treeId);
+    }
+
+    match /training_transactions/{txId} {
+      allow get: if isAuthenticated() && isValidId(txId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(txId);
+    }
+
+    match /training_rule_configs/{configId} {
+      allow get: if isAuthenticated() && isValidId(configId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(configId);
+    }
+
+    match /attendance_records/{recordId} {
+      allow get: if isAuthenticated() && isValidId(recordId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(recordId);
+    }
+
+    match /platform_sync/{syncId} {
+      allow get: if isAdmin() && isValidId(syncId);
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin() && isValidId(syncId);
+    }
+
+    match /system_settings/{settingKey} {
+      allow get: if isAdmin() && isValidId(settingKey);
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin() && isValidId(settingKey);
+    }
+
+    match /graduation_choices/{choiceId} {
+      allow get: if isAuthenticated() && isValidId(choiceId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(choiceId);
+    }
+
+    match /credentials/{credentialId} {
+      allow get: if isAdmin() && isValidId(credentialId);
+      allow list: if isAdmin();
+      allow create, update, delete: if isAdmin() && isValidId(credentialId);
+    }
+
+    match /academic_records/{recordId} {
+      allow get: if isAuthenticated() && isValidId(recordId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(recordId);
+    }
+
+    match /published_academic_snapshots/{snapId} {
+      allow get: if isAuthenticated() && isValidId(snapId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(snapId);
+    }
+
+    match /survey_templates/{templateId} {
+      allow get: if isAuthenticated() && isValidId(templateId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(templateId);
+    }
+
+    match /survey_template_versions/{versionId} {
+      allow get: if isAuthenticated() && isValidId(versionId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(versionId);
+    }
+
+    match /survey_responses/{responseId} {
+      allow get: if isAuthenticated() && isValidId(responseId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(responseId);
+    }
+
+    match /survey_sync_proposals/{proposalId} {
+      allow get: if isAuthenticated() && isValidId(proposalId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(proposalId);
+    }
+
+    match /exam_schedules/{examId} {
+      allow get: if isAuthenticated() && isValidId(examId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(examId);
+    }
+
+    match /user_avatars/{avatarId} {
+      allow get: if isAuthenticated() && isValidId(avatarId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(avatarId);
+    }
+
+    match /parent_conversations/{convId} {
+      allow get: if isAuthenticated() && isValidId(convId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(convId);
+    }
+
+    match /parent_announcements/{annId} {
+      allow get: if isAuthenticated() && isValidId(annId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(annId);
+    }
+
+    match /notifications/{notifId} {
+      allow get: if isAuthenticated() && isValidId(notifId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(notifId);
+    }
+
+    match /teacher_personal_tasks/{taskId} {
+      allow get: if isAuthenticated() && isValidId(taskId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(taskId);
+    }
+
+    match /support_tickets/{ticketId} {
+      allow get: if isAuthenticated() && isValidId(ticketId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(ticketId);
+    }
+
+    match /support_ticket_history/{historyId} {
+      allow get: if isAuthenticated() && isValidId(historyId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(historyId);
+    }
+
+    match /user_feedbacks/{feedbackId} {
+      allow get: if isAuthenticated() && isValidId(feedbackId);
+      allow list: if isAuthenticated();
+      allow create, update, delete: if (isAdmin() || isAuthenticated()) && isValidId(feedbackId);
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "entities": {
+    "Tenant": {
+      "title": "Tenant",
+      "description": "Workspace for a homeroom class managed by a teacher or admin",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "school_name": { "type": "string" },
+        "owner_name": { "type": "string" },
+        "owner_email": { "type": "string" },
+        "plan": { "type": "string", "enum": ["STANDARD", "PRO", "ENTERPRISE"] },
+        "status": { "type": "string", "enum": ["ACTIVE", "LOCKED", "SUSPENDED"] },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "name", "school_name", "status"]
+    },
+    "TeacherAccount": {
+      "title": "TeacherAccount",
+      "description": "Homeroom teacher user profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "teacher_id": { "type": "string" },
+        "tenant_id": { "type": "string" },
+        "full_name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "login_method": { "type": "string", "enum": ["GOOGLE", "ACCESS_CODE", "BOTH"] },
+        "status": { "type": "string", "enum": ["ACTIVE", "LOCKED", "REVOKED"] },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["teacher_id", "tenant_id", "full_name", "email", "status"]
+    },
+    "ClassSetting": {
+      "title": "ClassSetting",
+      "description": "Configuration and metadata of a homeroom class",
+      "type": "object",
+      "properties": {
+        "tenant_id": { "type": "string" },
+        "class_id": { "type": "string" },
+        "school_name": { "type": "string" },
+        "class_name": { "type": "string" },
+        "grade": { "type": "string" },
+        "stream": { "type": "string" },
+        "academic_year": { "type": "string" },
+        "semester": { "type": "string" },
+        "teacher_name": { "type": "string" },
+        "total_students": { "type": "number" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["tenant_id", "class_id", "school_name", "class_name"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Student roster record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenant_id": { "type": "string" },
+        "class_id": { "type": "string" },
+        "code": { "type": "string" },
+        "full_name": { "type": "string" },
+        "gender": { "type": "string", "enum": ["Nam", "Nữ"] },
+        "dob": { "type": "string" },
+        "group_num": { "type": "number" },
+        "officer_role": { "type": "string" },
+        "status": { "type": "string" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "tenant_id", "class_id", "code", "full_name"]
+    },
+    "PlatformSyncMetadata": {
+      "title": "PlatformSyncMetadata",
+      "description": "Metadata tracking sync version and audit markers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "synced_at": { "type": "string" },
+        "version": { "type": "string" },
+        "total_teachers": { "type": "number" },
+        "total_tenants": { "type": "number" }
+      },
+      "required": ["id", "synced_at", "version"]
+    },
+    "GraduationChoice": {
+      "title": "GraduationChoice",
+      "description": "Student graduation exam registration choice and estimated scores",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenant_id": { "type": "string" },
+        "student_id": { "type": "string" },
+        "elective_subject_1": { "type": "string" },
+        "elective_subject_2": { "type": "string" },
+        "is_foreign_language_exempt": { "type": "boolean" },
+        "exempt_certificate_type": { "type": "string" },
+        "registration_status": { "type": "string" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "tenant_id", "student_id"]
+    }
+  },
+  "firestore": {
+    "/tenants/{tenantId}": {
+      "schema": { "$ref": "#/entities/Tenant" },
+      "description": "Workspace collection for classes"
+    },
+    "/teacher_accounts/{teacherId}": {
+      "schema": { "$ref": "#/entities/TeacherAccount" },
+      "description": "Teacher accounts collection"
+    },
+    "/class_settings/{tenantId}": {
+      "schema": { "$ref": "#/entities/ClassSetting" },
+      "description": "Class configuration collection indexed by tenantId"
+    },
+    "/students/{studentDocId}": {
+      "schema": { "$ref": "#/entities/Student" },
+      "description": "Student records collection"
+    },
+    "/graduation_choices/{choiceId}": {
+      "schema": { "$ref": "#/entities/GraduationChoice" },
+      "description": "Graduation choices and registration collection"
+    },
+    "/platform_sync/{syncId}": {
+      "schema": { "$ref": "#/entities/PlatformSyncMetadata" },
+      "description": "Platform sync metadata"
+    }
+  }
+}

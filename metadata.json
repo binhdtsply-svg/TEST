@@ -1,0 +1,8 @@
+{
+  "name": "Không Gian Chủ Nhiệm Số_Ver23",
+  "description": "Không gian số toàn diện hỗ trợ Giáo viên chủ nhiệm trong quản lý lớp, rèn luyện, học tập và kết nối phụ huynh.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

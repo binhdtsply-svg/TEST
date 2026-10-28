@@ -1,0 +1,48 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# SQLite Database & Storage Protection
+/data/
+!src/data/
+backups/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# Cache & Build tool artifacts
+.vite/
+.vercel/
+.cache/
+
+# Recovery dumps & Checkpoints (non-runtime scratch data)
+/.recovery_dumps/
+/.checkpoints_pre_rc_fix/
+
+# Database snapshots containing student records, credentials, and temporary files
+/server/db/system_persistence_backup.json
+/server/db/system_persistence_backup_IMMUTABLE.json
+/server/db/system_persistence_backup*.json
+/server/db/*.tmp
+
+# Scratch prompt/response text dumps and binary files in project root
+/*.txt
+/*.bin
+/CLEAN_*.md
+/EXACT_*.md
+/EXTRACTED_*.md
+/PROMPT_*.md
+/clean_*
+/dump_*
+/find_*
+/extract_*
+/search_*
+/scan_all_pids.cjs
+
